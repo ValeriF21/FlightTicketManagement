@@ -1,0 +1,121 @@
+﻿@model LocationsViewModel
+@{
+    ViewBag.Title = "Locations";
+}
+
+<html dir="rtl">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/edit.css" rel="stylesheet" />
+
+</head>
+<body>
+    <header>
+        <h1 class="edit-header">יעדים</h1>
+        <form  asp-controller="Locations" asp-action="Create" method="POST">
+            <div class="form-row">
+                <div class="col-lg-1 col-md-6">
+                    <input type="text" class="form-control form-text" placeholder="קוד" asp-for="@Model.Code">
+                    <span asp-validation-for="@Model.Code" class="text-danger"></span>
+                </div>
+                <div class="col-lg-7 col-md-6">
+                    <input type="text" class="form-control form-text" placeholder="שם שדה התעופה" asp-for="@Model.Airport">
+                    <span asp-validation-for="@Model.Airport" class="text-danger"></span>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <input type="text" class="form-control form-text" placeholder="מדינה" asp-for="@Model.Country">
+                    <span asp-validation-for="@Model.Country" class="text-danger"></span>
+                </div>
+                <div class="col-lg-1 col-md-6">
+                    <div class="loc-submit">
+                    <button type="submit" class="btn btn-primary my-1 btn-submit btn-add-flight-div">
+                        הוסף   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                    </button>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        <table class="table table-hover data-table">
+            <thead>
+                <tr class="row">
+                    <th class="col-1" scope="col">קוד</th>
+                    <th class="col-5" scope="col">שם שדה התעופה</th>
+                    <th class="col-3" scope="col">מדינה</th>
+                    <th class="col" scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.locations)
+                {
+                    <tr class="row">
+                        <th scope="row" class="col-1">@Html.DisplayFor(modelItem => item.Code)</th>
+                        <td class="col-5">@Html.DisplayFor(modelItem => item.Airport)</td>
+                        <td class="col-3">@Html.DisplayFor(modelItem => item.Country)</td>
+                        <td class="btn-edit-delete col">
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter-@item.Code">
+                                עריכה  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                    <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z" />
+                                </svg>
+                            </button>
+                            <a asp-controller="Locations" asp-action="Delete" asp-route-id="@item.Code">
+                                <button type="button" class="btn btn-danger">
+                                    מחיקה<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                                    </svg>
+                                </button>
+                            </a>
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="exampleModalCenter-@item.Code" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">עדכון יעד</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: 0;">
+                                        <span aria-hidden="true" style="font-size: 1.8rem;">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form asp-controller="Locations" asp-action="Edit" asp-route-Code="@item.Code" method="POST">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="@item.Code">קוד שדה התעופה</label>
+                                                <input type="text" class="form-control" id="#@item.Code" value="@item.Code" asp-for="@item.Code" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="@item.Airport">שם שדה התעופה</label>
+                                                <input type="text" class="form-control" id="#@item.Airport" value="@item.Airport" asp-for="@item.Airport" />
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="@item.Country">מדינה</label>
+                                                <input type="text" class="form-control" id="#@item.Country" value="@item.Country" asp-for="@item.Country" />
+                                            </div>
+                                        </div>
+                                        <div class="form-row modal-form-footer">
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">סגור</button>
+                                                <button type="submit" class="btn btn-primary">עדכן</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </tbody>
+        </table>
+    </header>
+</body>
+</html>

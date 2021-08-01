@@ -1,0 +1,128 @@
+﻿@model FlightTicketManagement.Models.RemarksViewModel
+@{
+    ViewBag.Title = "Remarks";
+}
+
+<html dir="rtl">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/edit.css" rel="stylesheet" />
+
+</head>
+<body>
+    <header>
+        <h1 class="edit-header">הערות</h1>
+        <form asp-controller="Remarks" asp-action="Create" method="POST">
+            <div class="form-row">
+                <div class="col-3">
+                    <select class="form-select btn-dropdown select-remark" aria-label="Default select example" name="ID">
+                        @foreach (var item in Model.types)
+                        {
+                            <option value="@item.ID">@Html.DisplayFor(modelItem => item.Description)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-5">
+                    <input type="text" class="form-control form-text" placeholder="הערה" name="Description" required>
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary my-1 btn-submit btn-dropdown">
+                        הוסף   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <table class="table table-hover data-table">
+            <thead>
+                <tr class="row">
+                    <th class="col-3" scope="col">סוג הטיסה</th>
+                    <th class="col-5" scope="col">הערה</th>
+                    <th class="col" scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.remarks)
+                {
+                    <tr class="row">
+                        @foreach (var type in Model.types)
+                        {
+                            if (item.Type_ID == type.ID)
+                            {
+                                <th class="col-3" scope="row">@Html.DisplayFor(modelItem => type.Description)</th>
+                                break;
+                            }
+                        }
+                        <td class="col-5">@Html.DisplayFor(modelItem => item.Description)</td>
+                        <td class="btn-edit-delete col">
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModalCenter-@item.ID">
+                                עריכה  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                    <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z" />
+                                </svg>
+                            </button>
+                            <a asp-controller="Remarks" asp-action="Delete" asp-route-id="@item.ID">
+                                <button type="button" class="btn btn-danger">
+                                    מחיקה<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                                    </svg>
+                                </button>
+                            </a>
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="exampleModalCenter-@item.ID" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">עדכון יעד</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: 0;">
+                                        <span aria-hidden="true" style="font-size: 1.8rem;">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form asp-controller="Remarks" asp-action="Edit" asp-route-id="@item.ID" method="POST">
+                                        <div class="form-row">
+                                            <div class="form-group col-12">
+                                                <label for="@item.Description">הערה</label>
+                                                <input type="text" class="form-control" value="@item.Description" asp-for="@item.Description" />
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-top: 0px;">
+                                            <div class="btn-group form-text btn-dropdown" style="margin-top: 0px;">
+                                                <select class="form-select btn-dropdown col-12" aria-label="Default select example" asp-for="@item.Type_ID">
+                                                    @foreach (var type in Model.types)
+                                                    {
+                                                        @if (item.Type_ID == type.ID)
+                                                        {
+                                                            <option value="@type.ID" selected>@Html.DisplayFor(modeltem => type.Description)</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@type.ID">@Html.DisplayFor(modeltem => type.Description)</option>
+                                                        }
+
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                            <div class="form-row modal-form-footer">
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">סגור</button>
+                                                    <button type="submit" class="btn btn-primary">עדכן</button>
+                                                </div>
+                                            </div>
+</form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </tbody>
+            </table>
+    </header>
+</body>
+</html>

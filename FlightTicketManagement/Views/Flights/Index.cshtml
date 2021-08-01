@@ -1,0 +1,335 @@
+﻿@{
+    ViewData["Title"] = "Flights";
+}
+@model FlightsViewModel
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.full.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.14/jquery.datetimepicker.min.css" rel="stylesheet" />
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <link href="~/css/index-cards.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/edit.css" rel="stylesheet" />
+</head>
+<body>
+    <form asp-controller="Flights" asp-action="Create" method="POST">
+        <div class="form-container">
+            <div class="form-row flight-row">
+                <div class="col-3">
+                    <div class="btn-group form-text btn-dropdown" style="margin-top: 0px;">
+                        <select class="form-select btn-dropdown select-f" aria-label="Default select example" asp-for="flightForm.StartingPoint">
+                            @foreach (var item in Model.locations)
+                            {
+                                <option value="@item.Code">@Html.DisplayFor(modelItem => item.Code), @Html.DisplayFor(modelItem => item.Country)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3 flight-col">
+                    <div class="btn-group form-text btn-dropdown" style="margin-top: 0px;">
+                        <select class="form-select btn-dropdown select-f" aria-label="Default select example" asp-for="flightForm.Destination">
+                            @foreach (var item in Model.locations)
+                            {
+                                <option value="@item.Code">@Html.DisplayFor(modelItem => item.Code), @Html.DisplayFor(modelItem => item.Country)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="btn-group form-text btn-dropdown" style="margin-top: 0px;">
+                        <select class="form-select btn-dropdown select-f" aria-label="Default select example" asp-for="flightForm.Type_ID">
+                            @foreach (var item in Model.types)
+                            {
+                                <option value="@item.ID">@Html.DisplayFor(modeltem => item.Description)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <input type="text" class="form-control form-text" placeholder="מחיר בסיס" asp-for="@Model.flightForm.Base_Price">
+                    <span asp-validation-for="@Model.flightForm.Base_Price" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-row flight-row">
+                <div class="col-3">
+                    <input autocomplete="off" class="form-control" id="datetimepicker_DepartDepart" type="text" placeholder="תאריך ושעת המראה - מוצא" asp-for="flightForm.StartingPoint_Departure" />
+                </div>
+                <div class="col-3">
+                    <input autocomplete="off" class="form-control" id="datetimepicker_DepartDepart2" type="text" placeholder="תאריך ושעת נחיתה - מוצא" asp-for="flightForm.StartingPoint_Arrival" />
+                </div>
+                <div class="col-3">
+                    <input autocomplete="off" class="form-control" id="datetimepicker_DepartDepart3" type="text" placeholder="תאריך ושעת המראה - יעד" asp-for="flightForm.Destination_Departure" />
+                </div>
+                <div class="col-3">
+                    <input autocomplete="off" class="form-control" id="datetimepicker_DepartDepart4" type="text" placeholder="תאריך ושעת נחיתה - יעד" asp-for="flightForm.Destination_Arrival" />
+                </div>
+            </div>
+            <div class="row flight-row">
+                <div class="col-9">
+                </div>
+                <div class="col-3 btn-add-flight-div" style="padding-right: 0;">
+                    <button type="submit" class="btn btn-primary my-1 btn-submit btn-add-flight">
+                        הוסף   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    @foreach (var item in Model.flights)
+    {
+        <div class="text-center">
+            <div class='flight-card'>
+                <div class='flight-card--header'>
+                    <div class="new-div">
+                        <div class='flight-card--header-logo'>
+                            <img src='https://book.jetblue.com/assets/header/img/jetblue-white-reg.png'>
+                        </div>
+                        <div class='detail--title flight--number'>
+                            @Html.DisplayFor(modelItem => item.ID) | @Html.DisplayFor(modelItem => item.Description) | <span class="detail--price">$@item.Calculate_Price().ToString()</span>
+                        </div>
+                        <div class="btns">
+                            <button type="button" class="btn btn-secondary header-btn" data-toggle="collapse" data-target="#collapseExample-@item.ID" aria-expanded="false" aria-controls="collapseExample">הערות לטיסה</button>
+                            <button type="button" class="btn btn-secondary header-btn" data-toggle="modal" data-target="#exampleModalCenter-@item.ID">עדכון</button>
+                            <button type="submit" class="btn btn-danger header-btn" data-toggle="modal" data-target="#exampleModalCenter">מחיקה</button>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: 0;">
+                                        <span aria-hidden="true" style="font-size: 1.8rem">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" style="text-align: right !important;">
+                                    האם אתה בטוח שברצונך למחוק טיסה זו?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary btn-modal-close" data-dismiss="modal">סגור</button>
+                                    <form asp-controller="Flights" asp-action="Delete" asp-route-id="@item.ID">
+                                        <button type="submit" class="btn btn-danger">מחק</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='flight-card--header-details'>
+                        <div class='details-passenger'>
+                            <span class='detail--title'>
+                                חזור - נחיתה
+                            </span>
+                            <span class='detail--text'>
+                                @item.Destination_Arrival.ToString("ddd d/MM HH:mm")
+                            </span>
+                        </div>
+                        <div class='details-passenger'>
+                            <span class='detail--title'>
+                                חזור - המראה
+                            </span>
+                            <span class='detail--text'>
+                                @item.Destination_Departure.ToString("ddd d/MM HH:mm")
+                            </span>
+                        </div>
+                        <div class='details-depart'>
+                            <span class='detail--title'>
+                                הלוך - נחיתה
+                            </span>
+                            <span class='detail--text'>
+                                @item.StartingPoint_Arrival.ToString("ddd d/MM HH:mm")
+                            </span>
+                        </div>
+                        <div class='details-arrive'>
+                            <span class='detail--title'>
+                                הלוך - המראה
+                            </span>
+                            <span class='detail--text'>
+                                @item.StartingPoint_Departure.ToString("ddd d/MM HH:mm")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class='flight-card--details flight-card--details-container'>
+                    <div class='bc-from bc-container'>
+                        <span class='detail-code'>
+                            @Html.DisplayFor(modelItem => item.Destination)
+                        </span>
+                        <span class='detail-city'>
+                            @Html.DisplayFor(modelItem => item.Destintaion_Airport), @Html.DisplayFor(modelItem => item.Destintaion_Country)
+                        </span>
+                    </div>
+                    <div>
+                        <div class='bc-plane'>
+                            <span class="arr">&larr;</span>
+                        </div>
+                        <div class='bc-plane'>
+                            <span class="arr">&rarr;</span>
+                        </div>
+                    </div>
+                    <div class='bc-container'>
+                        <span class='detail-code'>
+                            @Html.DisplayFor(modelItem => item.StartingPoint)
+                        </span>
+                        <span class='detail-city'>
+                            @Html.DisplayFor(modelItem => item.Starting_Airport), @Html.DisplayFor(modelItem => item.Starting_Country)
+                        </span>
+                    </div>
+                </div>
+                <div dir="rtl" class="collapse" id="collapseExample-@item.ID">
+                    <div class="card card-body collapse-remarks">
+                        <ul>
+                            @foreach (var remark in Model.remarks)
+                            {
+                                if (remark.Type_ID == item.Type_ID)
+                                {
+                                    <li>@remark.Description</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal fade" id="exampleModalCenter-@item.ID" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">עדכון טיסה</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-left: 0;">
+                                    <span aria-hidden="true" style="font-size: 1.8rem;">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form asp-controller="Flights" asp-action="Edit" asp-route-id="@item.ID" method="POST">
+                                    <div class="form-row">
+                                        <div class="form-group col-lg-6 col-sm-12">
+                                            <label for="@item.ID">מספר טיסה</label>
+                                            <input type="text" class="form-control" id="#@item.ID" value="@item.ID" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-lg-6 col-sm-12">
+                                            <label for="@item.StartingPoint">מוצא</label>
+                                            <input type="text" class="form-control" value="@item.StartingPoint" asp-for="flightForm.StartingPoint" readonly>
+                                        </div>
+                                        <div class="form-group col-lg-6 col-sm-12">
+                                            <label for="@item.Destination">יעד</label>
+                                            <input type="text" class="form-control" value="@item.Destination" asp-for="flightForm.Destination" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-lg-6 col-sm-12">
+                                            <label for="@item.StartingPoint_Departure">נקודת מוצא - הלוך</label>
+                                            <input class="form-control" value="@item.StartingPoint_Departure" id="datetimepicker_1_@item.ID" type="text" placeholder="@item.StartingPoint_Departure.ToString("ddd d/MM HH:mm")" asp-for="flightForm.StartingPoint_Departure" />
+                                        </div>
+                                        <div class="col-lg-6 col-sm-12">
+                                            <label for="@item.StartingPoint_Arrival">נקודת מוצא - חזור</label>
+                                            <input class="form-control" value="@item.StartingPoint_Arrival" id="datetimepicker_2_@item.ID" type="text" placeholder="@item.StartingPoint_Arrival.ToString("ddd d/MM HH:mm")" asp-for="flightForm.StartingPoint_Arrival" />
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-lg-6 col-sm-12">
+                                            <label for="@item.Destination_Departure">נקודת יעד - הלוך</label>
+                                            <input class="form-control" value="@item.Destination_Departure" id="datetimepicker_3_@item.ID" type="text" placeholder="@item.Destination_Departure.ToString("ddd d/MM HH:mm")" asp-for="flightForm.Destination_Departure" />
+                                        </div>
+                                        <div class="col-lg-6 col-sm-12">
+                                            <label for="@item.Destination_Arrival">נקודת יעד - חזור</label>
+                                            <input class="form-control" value="@item.Destination_Arrival" id="datetimepicker_4_@item.ID" type="text" placeholder="@item.Destination_Arrival.ToString("ddd d/MM HH:mm")" asp-for="flightForm.Destination_Arrival" />
+                                        </div>
+                                    </div>
+                                    <div class="form-row flight-row">
+                                        <div class="col-lg-6 col-sm-12">
+                                            <label for="@item.Type_ID">סוג טיסה</label>
+                                            <select class="form-select btn-dropdown" aria-label="Default select example" asp-for="flightForm.Type_ID">
+                                                @foreach (var type in Model.types)
+                                                {
+                                                    if (type.ID == item.Type_ID)
+                                                    {
+                                                        <option value="@item.Type_ID" selected>@Html.DisplayFor(modeltem => item.Description)</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.Type_ID">@Html.DisplayFor(modeltem => type.Description)</option>
+                                                    }
+
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-6 col-sm-12">
+                                            <label for="@item.Base_Price">מחיר בסיס</label>
+                                            <input type="text" class="form-control form-text" placeholder="מחיר בסיס" asp-for="@Model.flightForm.Base_Price" value="@item.Base_Price">
+                                            <span asp-validation-for="@Model.flightForm.Base_Price" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-row modal-form-footer">
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary btn-modal-close" data-dismiss="modal">סגור</button>
+                                            <button type="submit" class="btn btn-primary">עדכן</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+<script>
+    $('#datetimepicker_DepartDepart').datetimepicker({
+        minDate: new Date(),
+        //format: "d-m-Y h:i",
+        step: 15,
+        onShow: function (ct) {
+            console.log($('#datetimepicker_DepartDepart2').val());
+            this.setOptions({
+                maxDate: $('#datetimepicker_DepartDepart2').val() ? $('#datetimepicker_DepartDepart2').val() : false
+            })
+        }
+    })
+
+    $('#datetimepicker_DepartDepart2').datetimepicker({
+        minDate: new Date(),
+        //format: "d-m-Y h:i",
+        step: 15,
+        onShow: function (ct) {
+            this.setOptions({
+                minDate: $('#datetimepicker_DepartDepart').val() ? $('#datetimepicker_DepartDepart').val() : false
+            })
+        },
+    });
+    
+    $('#datetimepicker_DepartDepart3').datetimepicker({
+        minDate: '0',
+        //format: "d-m-Y h:i",
+        step: 15,
+        onShow: function (ct) {
+            this.setOptions({
+                minDate: $('#datetimepicker_DepartDepart2').val() ? new Date($('#datetimepicker_DepartDepart2').val()).getTime() + (1 * 24 * 60 * 60 * 1000) : false,
+                maxDate: $('#datetimepicker_DepartDepart4').val() ? $('#datetimepicker_DepartDepart4').val() : false
+            })
+        }
+    });
+    $('#datetimepicker_DepartDepart4').datetimepicker({
+        minDate: '0',
+        //format: "d-m-Y h:i",
+        step: 15,
+        onShow: function (ct) {
+            this.setOptions({
+                minDate: $('#datetimepicker_DepartDepart3').val() ? $('#datetimepicker_DepartDepart3').val() : false,
+            })
+        }
+    });
+    @foreach(var item in Model.flights)
+    {
+        @:$('#datetimepicker_1_@item.ID').datetimepicker({ minDate: '0', format: "d-m-Y h:i", step: 15 });
+        @:$('#datetimepicker_2_@item.ID').datetimepicker({ minDate: '0', format: "d-m-Y h:i", step: 15 });
+        @:$('#datetimepicker_3_@item.ID').datetimepicker({ minDate: '0', format: "d-m-Y h:i", step: 15 });
+        @:$('#datetimepicker_4_@item.ID').datetimepicker({ minDate: '0', format: "d-m-Y h:i", step: 15 });
+    }
+</script>
+</body>
+</html>

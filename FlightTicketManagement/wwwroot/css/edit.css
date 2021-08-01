@@ -1,0 +1,29 @@
+﻿.edit-header {
+    text-align: center;
+}
+
+main {
+    box-sizing: content-box !important;
+    width: 100% !important;
+}
+
+.form-text {
+    text-align: center !important;
+}
+
+.btn-edit-delete {
+    text-align:left !important;
+    width: 20%;
+}
+
+.btn-dropdown {
+     width: 100% !important;
+ }
+
+.btn-submit {
+    float:right !important;
+}
+
+.data-table {
+    text-align:center;
+}
